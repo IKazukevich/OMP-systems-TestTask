@@ -28,17 +28,17 @@ void AbstractShape::moveCoors(QPoint delta)
 	TopRight+=delta;
 }
 
-QPoint AbstractShape::getTopRight()
+const QPoint AbstractShape::getTopRight()
 {
 	return TopRight;
 }
 
-QPoint AbstractShape::getBotLeft()
+const QPoint AbstractShape::getBotLeft()
 {
 	return BotLeft;
 }
 
-QPoint AbstractShape::getCenter()
+const QPoint AbstractShape::getCenter()
 {
 	return (BotLeft+TopRight)/2;
 }

@@ -40,9 +40,7 @@ signals:
 
 private:
 
-	struct Bond{ // Хранит номера фигур, между которыми есть связь
-		int Obj1_ID, Obj2_ID;
-	};
+	void Reset();
 
 	QPoint startPoint;
 	bool firstPointSet;

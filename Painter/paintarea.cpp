@@ -4,47 +4,54 @@ PaintArea::PaintArea(QWidget *parent)
 	: QWidget{parent}
 {
 	this->actionType = PaintArea::ActionType::no_action;
-	eventCancelled = true;
-	drawingShape = nullptr;
-	firstPointSet = false;
-	drawingLine = nullptr;
+	Reset();
+
+	lines.setParent(this);
 
 	firstPointShapeID = -1;
 	secondPointShapeID = -1;
 }
 
 void PaintArea::setActionRectangle(){
-	qDebug() << "Button 1 pressed";
+	Reset();
+
 	this->actionType = PaintArea::ActionType::rectangle;
 }
 
 void PaintArea::setActionTriangle(){
-	qDebug() << "Button 2 pressed";
+	Reset();
+
 	this->actionType = PaintArea::ActionType::triangle;
 }
 
 void PaintArea::setActionEllipse(){
-	qDebug() << "Button 3 pressed";
+	Reset();
+
 	this->actionType = PaintArea::ActionType::ellipse;
 }
 
 void PaintArea::setActionBond(){
-	qDebug() << "Button 4 pressed";
+	Reset();
+
 	this->actionType = PaintArea::ActionType::bond;
 }
 
 void PaintArea::setActionMove(){
-	qDebug() << "Button 5 pressed";
+	Reset();
+
 	this->actionType = PaintArea::ActionType::move;
 }
 
 void PaintArea::setActionErase(){
-	qDebug() << "Button 6 pressed";
+	Reset();
+
 	this->actionType = PaintArea::ActionType::erase;
 }
 
 void PaintArea::loadPaintArea()
 {
+	Reset();
+
 	std::fstream file;
 	file.open("ShapesAndLines.dat",  std::fstream::in | std::fstream::out | std::fstream::binary);
 
@@ -53,9 +60,9 @@ void PaintArea::loadPaintArea()
 	shapes.resize(var);
 	for (int i = 0; i < shapes.size(); i++) {
 		file.read((char*)&var, sizeof(var));
-		if(var == 1)shapes[i] = new Triangle();else
-			if(var == 2)shapes[i] = new Rectangle();else
-				if(var == 3)shapes[i] = new Ellipse();
+		if(var == 1)shapes[i] = new Triangle(this);else
+			if(var == 2)shapes[i] = new Rectangle(this);else
+				if(var == 3)shapes[i] = new Ellipse(this);
 		file.read((char*)&var2, sizeof(var2));
 		file.read((char*)&var3, sizeof(var3));
 		file.read((char*)&var4, sizeof(var4));
@@ -77,6 +84,8 @@ void PaintArea::loadPaintArea()
 
 void PaintArea::savePaintArea()
 {
+	Reset();
+
 	std::fstream file;
 	file.open("ShapesAndLines.dat", std::fstream::trunc | std::fstream::in | std::fstream::out | std::fstream::binary);
 
@@ -115,17 +124,17 @@ void PaintArea::mousePressEvent(QMouseEvent *event)
 		startPoint = event->position().toPoint();
 		switch(this->actionType){
 		case ActionType::rectangle:{
-			drawingShape = new Rectangle();
+			drawingShape = new Rectangle(this);
 			eventCancelled = false;
 			break;
 		}
 		case ActionType::triangle:{
-			drawingShape = new Triangle();
+			drawingShape = new Triangle(this);
 			eventCancelled = false;
 			break;
 		}
 		case ActionType::ellipse:{
-			drawingShape = new Ellipse();
+			drawingShape = new Ellipse(this);
 			eventCancelled = false;
 			break;
 		}
@@ -155,7 +164,8 @@ void PaintArea::mousePressEvent(QMouseEvent *event)
 				if(shapes[i]->containsPoint(startPoint)){
 					eventCancelled = false;
 					firstPointShapeID = i;
-
+					setCursor(Qt::CursorShape::ClosedHandCursor);
+					//QCursor::setShape(Qt::ClosedHandCursor);
 					return;
 				}
 			}
@@ -178,23 +188,13 @@ void PaintArea::mousePressEvent(QMouseEvent *event)
 		}
 	}
 	if(event->button() == Qt::RightButton){
-		eventCancelled = true;
-		drawingShape = nullptr;
-		firstPointSet = false;
-		drawingLine = nullptr;
-		this->setMouseTracking(0);
-		update();
+		Reset();
 	}
 }
 
 void PaintArea::keyPressEvent(QKeyEvent *event){
 	if(event->key() == Qt::Key_Escape){
-		eventCancelled = true;
-		drawingShape = nullptr;
-		firstPointSet = false;
-		drawingLine = nullptr;
-		this->setMouseTracking(0);
-		update();
+		Reset();
 	}
 }
 
@@ -239,19 +239,19 @@ void PaintArea::mouseReleaseEvent(QMouseEvent *event)
 	if (!eventCancelled && (event->buttons() != Qt::LeftButton)){
 		switch(this->actionType){
 		case ActionType::rectangle:{
-			shapes.append(new Rectangle(drawingShape->getBotLeft(), drawingShape->getTopRight()));
+			shapes.append(new Rectangle(drawingShape->getBotLeft(), drawingShape->getTopRight(), this));
 			drawingShape = nullptr;
 			update();
 			break;
 		}
 		case ActionType::triangle:{
-			shapes.append(new Triangle(drawingShape->getBotLeft(), drawingShape->getTopRight()));
+			shapes.append(new Triangle(drawingShape->getBotLeft(), drawingShape->getTopRight(), this));
 			drawingShape = nullptr;
 			update();
 			break;
 		}
 		case ActionType::ellipse:{
-			shapes.append(new Ellipse(drawingShape->getBotLeft(), drawingShape->getTopRight()));
+			shapes.append(new Ellipse(drawingShape->getBotLeft(), drawingShape->getTopRight(), this));
 			drawingShape = nullptr;
 			update();
 			break;
@@ -268,9 +268,6 @@ void PaintArea::mouseReleaseEvent(QMouseEvent *event)
 					return;
 				}else {
 					eventCancelled = true;
-					drawingShape = nullptr;
-					firstPointSet = false; // optimize
-					drawingLine = nullptr;
 					this->setMouseTracking(0);
 					update();
 				}
@@ -295,7 +292,7 @@ void PaintArea::mouseReleaseEvent(QMouseEvent *event)
 			break;
 		}
 		case ActionType::move:{
-			// Пусто
+			setCursor(Qt::CursorShape::ArrowCursor);
 			break;
 		}
 		case ActionType::erase:{
@@ -337,4 +334,13 @@ void PaintArea::paintEvent(QPaintEvent *event)
 
 	if(painter.isActive())
 		painter.end();
+}
+
+void PaintArea::Reset(){
+	eventCancelled = true;
+	drawingShape = nullptr;
+	firstPointSet = false;
+	drawingLine = nullptr;
+	this->setMouseTracking(0);
+	update();
 }

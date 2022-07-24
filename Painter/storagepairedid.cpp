@@ -50,19 +50,3 @@ const int StoragePairedID::getSize()
 {
 	return IDs.size();
 }
-
-bool StoragePairedID::LineContains(int x1, int y1, int x2, int y2, int x, int y)
-{
-	int cross = (x - x1) * (y2 - y1) - (y - y1) * (x2 - x1); // точка лежит на линии.
-
-	if(cross != 0)return false;
-
-	if (abs(x2 - x1) >= abs(y2 - y1)) // точка лежит между концами линии
-	  return (x2 - x1) > 0 ?
-		x1 <= x && x <= x2:
-		x2 <= x && x <= x1;
-	else
-	  return (y2 - y1) > 0 ?
-		y1 <= y && y <= y2 :
-		y2 <= y && y <= y1;
-}

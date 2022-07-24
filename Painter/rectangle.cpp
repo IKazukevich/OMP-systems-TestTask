@@ -20,11 +20,11 @@ void Rectangle::paint(QPaintDevice* Dev, QPainter* painter)
 	painter->drawRect(QRect(this->BotLeft, this->TopRight));
 }
 
-bool Rectangle::containsPoint(QPoint point){
+const bool Rectangle::containsPoint(QPoint point){
 	QRect test(this->BotLeft, this->TopRight);
 	return test.contains(point);
 }
 
-int Rectangle::getTypeNumber(){
+const int Rectangle::getTypeNumber(){
 	return 2;
 }

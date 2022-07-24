@@ -31,7 +31,7 @@ float Triangle::area(QPoint p1, QPoint p2, QPoint p3)
    return abs((p1.x()*(p2.y()-p3.y()) + p2.x()*(p3.y()-p1.y())+ p3.x()*(p1.y()-p2.y()))/2.0);
 }
 
-bool Triangle::containsPoint(QPoint point){
+const bool Triangle::containsPoint(QPoint point){
 	QPoint p1(this->BotLeft.x(), this->BotLeft.y());
 	QPoint p2(this->TopRight.x(), this->BotLeft.y());
 	QPoint p3((this->BotLeft.x()+this->TopRight.x())/2, this->TopRight.y());
@@ -44,6 +44,6 @@ bool Triangle::containsPoint(QPoint point){
 	return (A == A1 + A2 + A3);
 }
 
-int Triangle::getTypeNumber(){
+const int Triangle::getTypeNumber(){
 	return 1;
 }

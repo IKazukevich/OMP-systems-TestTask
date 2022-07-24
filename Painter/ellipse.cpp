@@ -20,7 +20,7 @@ void Ellipse::paint(QPaintDevice* Dev, QPainter* painter)
 	painter->drawEllipse(QRect(this->BotLeft, this->TopRight));
 }
 
-bool Ellipse::containsPoint(QPoint point)
+const bool Ellipse::containsPoint(QPoint point)
 {
 	float EllCenterX, EllCenterY, EllHeight, EllLength;
 	EllCenterX = (this->BotLeft.x() + this->TopRight.x())/2;
@@ -33,6 +33,6 @@ bool Ellipse::containsPoint(QPoint point)
 	return (result <= 1);
 }
 
-int Ellipse::getTypeNumber(){
+const int Ellipse::getTypeNumber(){
 	return 3;
 }

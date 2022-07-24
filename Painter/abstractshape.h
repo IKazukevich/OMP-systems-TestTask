@@ -11,14 +11,14 @@ public:
 
 	explicit AbstractShape(QObject *p = nullptr);
 	explicit AbstractShape(QPoint, QPoint, QObject *p);
-	virtual bool containsPoint(QPoint point) = 0;
+	virtual const bool containsPoint(QPoint point) = 0;
 	void setCoords(QPoint BotLeft, QPoint TopRight);
 	void moveCoors(QPoint delta);
 	virtual void paint(QPaintDevice* Dev, QPainter* painter) = 0;
-	virtual int getTypeNumber() = 0;
-	QPoint getTopRight();
-	QPoint getBotLeft();
-	QPoint getCenter();
+	virtual const int getTypeNumber() = 0;
+	const QPoint getTopRight();
+	const QPoint getBotLeft();
+	const QPoint getCenter();
 
 signals:
 

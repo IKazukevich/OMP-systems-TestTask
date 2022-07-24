@@ -10,8 +10,8 @@ public:
 	explicit Triangle(QObject* parent = nullptr);
 	explicit Triangle(QPoint, QPoint, QObject* = nullptr);
 	void paint(QPaintDevice* Dev, QPainter* painter) final;
-	bool containsPoint(QPoint point);
-	int getTypeNumber() final;
+	const bool containsPoint(QPoint point);
+	const int getTypeNumber() final;
 private:
 	float area(QPoint,QPoint,QPoint);
 };
