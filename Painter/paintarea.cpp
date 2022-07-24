@@ -165,7 +165,6 @@ void PaintArea::mousePressEvent(QMouseEvent *event)
 					eventCancelled = false;
 					firstPointShapeID = i;
 					setCursor(Qt::CursorShape::ClosedHandCursor);
-					//QCursor::setShape(Qt::ClosedHandCursor);
 					return;
 				}
 			}
@@ -272,7 +271,11 @@ void PaintArea::mouseReleaseEvent(QMouseEvent *event)
 					update();
 				}
 			}else {
-				if(secondPointShapeID == -1)return;
+				if(secondPointShapeID == -1)
+				{
+					Reset();
+					return;
+				}
 				if(shapes[secondPointShapeID]->containsPoint(event->position().toPoint())){
 					this->setMouseTracking(0);
 					firstPointSet = false;
@@ -281,12 +284,7 @@ void PaintArea::mouseReleaseEvent(QMouseEvent *event)
 					update();
 					return;
 				}else{
-					eventCancelled = true;
-					drawingShape = nullptr;
-					firstPointSet = false;
-					drawingLine = nullptr;
-					this->setMouseTracking(0);
-					update();
+					Reset();
 				}
 			}
 			break;
@@ -342,5 +340,6 @@ void PaintArea::Reset(){
 	firstPointSet = false;
 	drawingLine = nullptr;
 	this->setMouseTracking(0);
+	setCursor(Qt::CursorShape::ArrowCursor);
 	update();
 }
